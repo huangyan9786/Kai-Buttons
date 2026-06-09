@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kai's MP3 播放器</title>
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Kai老師美聲推廣委員會。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <!-- Soundwave SVG Icon -->
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V21M17 7V17M22 10V14M7 5V19M2 9V15" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <h1 id="mainTitle">Kai's 音效播放器</h1>
+            </div>
+            <p class="subtitle">點擊下方按鈕即可播放音效 (單次播放)</p>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="player-main">
+            <!-- Dynamic Status Panel -->
+            <section class="status-panel" id="statusPanel" aria-labelledby="statusText">
+                <div class="status-content">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span class="status-text" id="statusText">就緒</span>
+                </div>
+                <div class="current-track-info">
+                    <span class="track-name" id="trackName">未播放任何音樂</span>
+                    <div class="progress-bar-container" id="progressBarContainer">
+                        <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Buttons List Container -->
+            <section class="buttons-container" id="buttonsContainer" aria-label="音效清單">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>正在載入音效檔案...</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>© 2026 Kai. 版權所有。</p>
+        </footer>
+    </div>
+
+    <!-- Web Audio Player (Hidden API element) -->
+    <audio id="audioPlayer" preload="auto"></audio>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

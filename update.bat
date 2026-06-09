@@ -1,0 +1,6 @@
+@echo off
+echo Scanning directory and updating playlist...
+python update_playlist.py
+echo.
+echo Update completed! Press any key to close this window...
+pause > nul

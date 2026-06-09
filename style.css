@@ -1,0 +1,361 @@
+/* Modern CSS Custom Properties for Theming */
+:root {
+    --bg-primary: #f6f7f7;
+    --bg-secondary: #ffffff;
+    --accent-color: #00ccb8;
+    /* Mint Teal from KIMIKO site */
+    --accent-glow: rgba(0, 204, 184, 0.25);
+    --text-primary: #3c3c46;
+    /* Soft Charcoal from KIMIKO site */
+    --text-secondary: #8a8a91;
+    /* Slate Gray */
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(60, 60, 70, 0.08);
+    --glass-hover-bg: rgba(0, 204, 184, 0.06);
+    --glass-hover-border: rgba(0, 204, 184, 0.3);
+    --success-color: #00ccb8;
+    /* Complementary Mint Teal */
+    --playing-glow: rgba(0, 204, 184, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-primary);
+    background-image:
+        radial-gradient(at 0% 0%, rgba(0, 204, 184, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 204, 184, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1500px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Header Styles */
+.app-header {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.logo-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--accent-color);
+    filter: drop-shadow(0 0 8px var(--accent-glow));
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.app-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.player-main {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Status Panel */
+.status-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px 0 rgba(60, 60, 70, 0.04);
+}
+
+.status-panel.playing {
+    border-color: rgba(0, 204, 184, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 204, 184, 0.12);
+}
+
+.status-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--text-secondary);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.status-panel.playing .status-dot {
+    background-color: var(--success-color);
+    box-shadow: 0 0 8px var(--success-color);
+    animation: flash 1.5s infinite ease-in-out;
+}
+
+.status-text {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.status-panel.playing .status-text {
+    color: var(--success-color);
+}
+
+.current-track-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.track-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(60, 60, 70, 0.06);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-color), var(--success-color));
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+/* Button Layout - 80% web width, centered, 3 buttons per line */
+.buttons-container {
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.sound-btn {
+    width: 100%;
+    min-width: 0;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    color: var(--text-primary);
+    padding: 18px 24px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    outline: none;
+    overflow: hidden;
+}
+
+/* Interactive & Hover Effects */
+.sound-btn:hover {
+    background: var(--glass-hover-bg);
+    border-color: var(--glass-hover-border);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 204, 184, 0.1);
+}
+
+.sound-btn:active {
+    transform: translateY(0);
+    background: rgba(0, 204, 184, 0.1);
+}
+
+.sound-btn.is-playing {
+    background: rgba(0, 204, 184, 0.06);
+    border-color: var(--success-color);
+    box-shadow: 0 4px 15px rgba(0, 204, 184, 0.12);
+}
+
+/* Button Elements */
+.btn-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding-right: 12px;
+}
+
+.btn-index {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: rgba(60, 60, 70, 0.04);
+    padding: 4px 8px;
+    border-radius: 6px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.btn-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.play-indicator-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: all 0.25s ease;
+}
+
+.sound-btn:hover .play-indicator-icon {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+.sound-btn.is-playing .play-indicator-icon {
+    color: var(--success-color);
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+/* Loading & Empty States */
+.loading-state {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-secondary);
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(60, 60, 70, 0.05);
+    border-top-color: var(--accent-color);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+}
+
+@keyframes flash {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* Footer Styling */
+.app-footer {
+    text-align: center;
+    padding: 20px 0;
+    color: rgba(60, 60, 70, 0.4);
+    font-size: 0.85rem;
+}
+
+/* Responsive Scaling */
+@media (max-width: 900px) {
+    .buttons-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 20px 10px;
+    }
+
+    .app-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .player-main {
+        gap: 24px;
+    }
+
+    .buttons-container {
+        width: 90%;
+        /* Slight adjustment for mobile to keep readability */
+        grid-template-columns: 1fr;
+    }
+
+    .sound-btn {
+        padding: 14px 18px;
+        font-size: 0.95rem;
+    }
+}
