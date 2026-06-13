@@ -47,6 +47,40 @@
                 </div>
             </section>
 
+            <!-- Combo Selection Queue Panel -->
+            <section class="combo-panel" id="comboPanel" aria-labelledby="comboTitle">
+                <div class="combo-header">
+                    <div class="combo-title-area">
+                        <svg class="combo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M19 11H5M19 11C20.1046 11 21 11.8954 21 13V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V13C3 11.8954 3.89543 11 5 11M19 11V5C19 3.89543 18.1046 3 17 3H7C5.89543 3 5 3.89543 5 5V11"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <h2 id="comboTitle">Kai語音合體區</h2>
+                    </div>
+                    <div class="combo-actions">
+                        <button class="combo-action-btn play-combo" id="playComboBtn" disabled>
+                            <svg class="combo-play-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            組合播放
+                        </button>
+                        <button class="combo-action-btn clear-combo" id="clearComboBtn" disabled>清空組合</button>
+                    </div>
+                </div>
+                <div class="combo-dropzone" id="comboDropzone">
+                    <div class="combo-placeholder" id="comboPlaceholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28"
+                            height="28" stroke-linecap="round">
+                            <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        <p>將下方的音效按鈕拖曳至此處進行組合</p>
+                    </div>
+                    <div class="combo-list" id="comboList"></div>
+                </div>
+            </section>
+
             <!-- Buttons List Container -->
             <section class="buttons-container" id="buttonsContainer" aria-label="音效清單">
                 <div class="loading-state">

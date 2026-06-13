@@ -6,68 +6,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const trackNameLabel = document.getElementById('trackName');
     const progressBar = document.getElementById('progressBar');
     
+    // Combo panel elements
+    const playComboBtn = document.getElementById('playComboBtn');
+    const clearComboBtn = document.getElementById('clearComboBtn');
+    const comboDropzone = document.getElementById('comboDropzone');
+    const comboPlaceholder = document.getElementById('comboPlaceholder');
+    const comboList = document.getElementById('comboList');
+
     let currentActiveButton = null;
+    let comboQueue = []; // Array of { id, src, name }
+    let isComboPlaying = false;
+    let currentComboIndex = -1;
 
     // Hardcoded fallback files found in the root directory
     const FALLBACK_MP3_FILES = [
-        "MP3/Ara~Ara~.mp3",
-        "MP3/let me thin think.mp3",
-        "MP3/mental real 哭喔.mp3",
-        "MP3/ㄉㄟˇㄒㄧㄡˊ.mp3",
-        "MP3/一圈是365.mp3",
-        "MP3/乾固了.mp3",
         "MP3/什麼屁溝難聽死了.mp3",
-        "MP3/你們少囉嗦!.mp3",
-        "MP3/你們很幽默喔.mp3",
         "MP3/你們自己當配菜.mp3",
-        "MP3/你在講什麼我聽不懂.mp3",
-        "MP3/你還是需要有個屁溝.mp3",
-        "MP3/出BUG啦.mp3",
-        "MP3/吸一吸 弄一弄.mp3",
-        "MP3/咩.mp3",
-        "MP3/哭喔.mp3",
-        "MP3/哼 給我等著.mp3",
-        "MP3/哼 鄙視.mp3",
         "MP3/哼! 360.mp3",
-        "MP3/哼歌.mp3",
-        "MP3/喔摁摁摁摁~~~.mp3",
-        "MP3/囚禁感覺不錯.mp3",
-        "MP3/外面的世界很危險.mp3",
-        "MP3/大師晚上好阿.mp3",
-        "MP3/好機車喔.mp3",
-        "MP3/好痛苦喔.mp3",
         "MP3/完美.mp3",
-        "MP3/對對對.mp3",
-        "MP3/建模不要動腦.mp3",
-        "MP3/我不會再講什麼365度了.mp3",
-        "MP3/我不知道.mp3",
-        "MP3/我不要活了.mp3",
-        "MP3/我很抱歉 真的沒有(氣音).mp3",
-        "MP3/我是隱性攻.mp3",
-        "MP3/我的腰力挺好的.mp3",
-        "MP3/我覺得挺好的.mp3",
-        "MP3/抓捕雪貂.mp3",
-        "MP3/拿去熬湯變成貂皮.mp3",
-        "MP3/插進屁股.mp3",
-        "MP3/早阿.mp3",
-        "MP3/早阿哇沙米.mp3",
-        "MP3/晚上好阿.mp3",
-        "MP3/有沒有很簡單.mp3",
-        "MP3/死給哪.mp3",
-        "MP3/沒有 我很抱歉(氣音).mp3",
-        "MP3/沒社入不會去.mp3",
-        "MP3/溫和小受.mp3",
-        "MP3/發出了奇怪的聲音.mp3",
-        "MP3/笑死我了.mp3",
-        "MP3/老師的屁股比較大.mp3",
-        "MP3/耐心根性毅力.mp3",
-        "MP3/腦袋放空.mp3",
-        "MP3/買5090給我啊.mp3",
-        "MP3/趴機趴機趴機趴機.mp3",
-        "MP3/跑不動.mp3",
-        "MP3/這段助教幫我剪掉.mp3",
-        "MP3/阿不對不對不對(發出怪聲).mp3",
-        "MP3/陪你打lol.mp3"
+        "MP3/屁溝.mp3",
+        "MP3/阿不對不對不對(發出怪聲).mp3"
     ];
 
     /**
@@ -151,14 +109,21 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Create buttons for each file
+        // Create button cards for each file
         mp3Files.forEach((file, index) => {
             const displayName = formatFileName(file);
+            
+            // Container wrapper for layout (soundboard button + quick add button)
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'sound-card-wrapper';
+            
+            // The Play Button
             const button = document.createElement('button');
             button.className = 'sound-btn';
             button.setAttribute('data-src', file);
             button.setAttribute('aria-label', `播放 ${displayName}`);
             button.id = `btn-${index}`;
+            button.setAttribute('draggable', 'true'); // Make button draggable
 
             // Button Inner Content: Title & Play Icon
             button.innerHTML = `
@@ -171,10 +136,307 @@ document.addEventListener('DOMContentLoaded', () => {
                 </svg>
             `;
 
-            // Setup click handler
-            button.addEventListener('click', () => playAudio(file, button));
-            buttonsContainer.appendChild(button);
+            // Setup play click handler
+            button.addEventListener('click', () => {
+                if (isComboPlaying) {
+                    stopComboPlayback();
+                }
+                playAudio(file, button);
+            });
+
+            // Dragstart handler for Drag and Drop
+            button.addEventListener('dragstart', (e) => {
+                const dragData = { src: file, name: displayName };
+                e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+                e.dataTransfer.effectAllowed = 'copy';
+            });
+
+            // The Quick Add Button
+            const addToComboBtn = document.createElement('button');
+            addToComboBtn.className = 'add-to-combo-btn';
+            addToComboBtn.setAttribute('title', '加入組合清單');
+            addToComboBtn.setAttribute('aria-label', `將 ${displayName} 加入組合清單`);
+            addToComboBtn.innerHTML = '+';
+            
+            addToComboBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addToCombo(file, displayName);
+            });
+
+            // Assemble wrapper
+            cardWrapper.appendChild(button);
+            cardWrapper.appendChild(addToComboBtn);
+            buttonsContainer.appendChild(cardWrapper);
         });
+
+        // Initialize drag & drop dropzone listeners
+        setupDropzoneListeners();
+        
+        // Initialize combo list UI
+        renderComboList();
+    }
+
+    /**
+     * Setup event listeners for the combo dropzone
+     */
+    function setupDropzoneListeners() {
+        comboDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            comboDropzone.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'copy';
+        });
+
+        comboDropzone.addEventListener('dragleave', () => {
+            comboDropzone.classList.remove('drag-over');
+        });
+
+        comboDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            comboDropzone.classList.remove('drag-over');
+            
+            try {
+                const rawData = e.dataTransfer.getData('text/plain');
+                const data = JSON.parse(rawData);
+                
+                if (data && data.src && data.name) {
+                    addToCombo(data.src, data.name);
+                }
+            } catch (error) {
+                // Ignore errors from invalid drag sources (e.g. text from other websites)
+            }
+        });
+    }
+
+    /**
+     * Add sound to combo queue
+     */
+    function addToCombo(src, name) {
+        comboQueue.push({
+            id: Date.now() + '-' + Math.random(),
+            src: src,
+            name: name
+        });
+        renderComboList();
+    }
+
+    /**
+     * Remove sound from combo queue
+     */
+    function removeFromCombo(index) {
+        if (isComboPlaying && currentComboIndex === index) {
+            stopComboPlayback();
+        } else if (isComboPlaying && index < currentComboIndex) {
+            currentComboIndex--;
+        }
+        
+        comboQueue.splice(index, 1);
+        renderComboList();
+    }
+
+    /**
+     * Render the combo queue items in the UI
+     */
+    function renderComboList() {
+        if (comboQueue.length === 0) {
+            comboPlaceholder.style.display = 'flex';
+            comboList.style.display = 'none';
+            playComboBtn.disabled = true;
+            clearComboBtn.disabled = true;
+            return;
+        }
+
+        comboPlaceholder.style.display = 'none';
+        comboList.style.display = 'flex';
+        playComboBtn.disabled = false;
+        clearComboBtn.disabled = false;
+
+        comboList.innerHTML = '';
+        
+        comboQueue.forEach((item, index) => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'combo-item';
+            itemEl.setAttribute('draggable', 'true');
+            itemEl.setAttribute('data-index', index);
+            
+            if (isComboPlaying && currentComboIndex === index) {
+                itemEl.classList.add('is-playing');
+            }
+
+            itemEl.innerHTML = `
+                <span class="combo-item-handle">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M20 9H4v2h16V9zm0 4H4v2h16v-2z"/>
+                    </svg>
+                </span>
+                <span class="combo-item-name">${item.name}</span>
+                <button class="combo-item-delete" aria-label="移除">&times;</button>
+            `;
+
+            // Delete item handler
+            itemEl.querySelector('.combo-item-delete').addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeFromCombo(index);
+            });
+
+            // Drag events for reordering within the combo list
+            itemEl.addEventListener('dragstart', (e) => {
+                itemEl.classList.add('dragging-item');
+                e.dataTransfer.setData('text/combo-index', index);
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            itemEl.addEventListener('dragend', () => {
+                itemEl.classList.remove('dragging-item');
+                document.querySelectorAll('.combo-item').forEach(el => el.classList.remove('drag-over'));
+            });
+
+            itemEl.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                itemEl.classList.add('drag-over');
+            });
+
+            itemEl.addEventListener('dragleave', () => {
+                itemEl.classList.remove('drag-over');
+            });
+
+            itemEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                itemEl.classList.remove('drag-over');
+                
+                const fromIndexStr = e.dataTransfer.getData('text/combo-index');
+                if (fromIndexStr !== '') {
+                    const fromIndex = parseInt(fromIndexStr, 10);
+                    const toIndex = index;
+                    
+                    if (fromIndex !== toIndex) {
+                        // Move item inside queue
+                        const element = comboQueue.splice(fromIndex, 1)[0];
+                        comboQueue.splice(toIndex, 0, element);
+                        
+                        // Adjust active index if combo is playing
+                        if (isComboPlaying) {
+                            if (currentComboIndex === fromIndex) {
+                                currentComboIndex = toIndex;
+                            } else if (fromIndex < currentComboIndex && toIndex >= currentComboIndex) {
+                                currentComboIndex--;
+                            } else if (fromIndex > currentComboIndex && toIndex <= currentComboIndex) {
+                                currentComboIndex++;
+                            }
+                        }
+                        
+                        renderComboList();
+                    }
+                }
+            });
+
+            comboList.appendChild(itemEl);
+        });
+    }
+
+    /**
+     * Start playing combo queue
+     */
+    function playCombo() {
+        if (comboQueue.length === 0) return;
+
+        if (isComboPlaying) {
+            stopComboPlayback();
+            return;
+        }
+
+        isComboPlaying = true;
+        currentComboIndex = 0;
+        
+        updatePlayComboButtonUI(true);
+        
+        // Remove styling from single track player
+        if (currentActiveButton) {
+            currentActiveButton.classList.remove('is-playing');
+            updateButtonIcon(currentActiveButton, false);
+            currentActiveButton = null;
+        }
+
+        playNextComboItem();
+    }
+
+    /**
+     * Play current indexed track in the combo queue
+     */
+    function playNextComboItem() {
+        if (!isComboPlaying) return;
+
+        if (currentComboIndex >= comboQueue.length) {
+            // Queue finished
+            stopComboPlayback();
+            return;
+        }
+
+        const currentItem = comboQueue[currentComboIndex];
+        
+        // Highlight active card
+        renderComboList();
+
+        // Update status panel
+        trackNameLabel.textContent = `[組合播放 ${currentComboIndex + 1}/${comboQueue.length}] ${currentItem.name}`;
+        statusText.textContent = '組合播放中';
+        statusPanel.classList.add('playing');
+
+        audioPlayer.src = currentItem.src;
+        progressBar.style.width = '0%';
+        progressBar.setAttribute('aria-valuenow', '0');
+
+        audioPlayer.play()
+            .catch(error => {
+                console.error('Combo playback failed:', error);
+                // Move to next track automatically
+                currentComboIndex++;
+                playNextComboItem();
+            });
+    }
+
+    /**
+     * Stop combo queue playback
+     */
+    function stopComboPlayback() {
+        isComboPlaying = false;
+        currentComboIndex = -1;
+        
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        
+        // Reset status panel UI
+        statusText.textContent = '就緒';
+        statusPanel.classList.remove('playing');
+        progressBar.style.width = '0%';
+        progressBar.setAttribute('aria-valuenow', '0');
+        trackNameLabel.textContent = '未播放任何音樂';
+
+        updatePlayComboButtonUI(false);
+        renderComboList();
+    }
+
+    /**
+     * Update Play/Stop button labels and icons
+     */
+    function updatePlayComboButtonUI(isPlaying) {
+        if (isPlaying) {
+            playComboBtn.classList.add('playing');
+            playComboBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                </svg>
+                停止播放
+            `;
+        } else {
+            playComboBtn.classList.remove('playing');
+            playComboBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                組合播放
+            `;
+        }
     }
 
     /**
@@ -187,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove styling from current active button
         if (currentActiveButton) {
             currentActiveButton.classList.remove('is-playing');
-            // Reset icon of previously active button to Play
             updateButtonIcon(currentActiveButton, false);
         }
 
@@ -250,8 +511,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Reset when audio finishes playing (Single Play behavior)
+    // Reset when audio finishes playing
     audioPlayer.addEventListener('ended', () => {
+        if (isComboPlaying) {
+            currentComboIndex++;
+            playNextComboItem();
+            return;
+        }
+
         statusText.textContent = '就緒';
         statusPanel.classList.remove('playing');
         progressBar.style.width = '0%';
@@ -266,7 +533,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle external or manual pauses
     audioPlayer.addEventListener('pause', () => {
-        // If it paused but didn't end, keep button icon updated
         if (audioPlayer.currentTime < audioPlayer.duration) {
             statusText.textContent = '已暫停';
             statusPanel.classList.remove('playing');
@@ -274,6 +540,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateButtonIcon(currentActiveButton, false);
             }
         }
+    });
+
+    // Bind Combo Action Buttons
+    playComboBtn.addEventListener('click', playCombo);
+    clearComboBtn.addEventListener('click', () => {
+        stopComboPlayback();
+        comboQueue = [];
+        renderComboList();
     });
 
     // Start loading the player list
