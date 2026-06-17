@@ -92,6 +92,8 @@ body {
 
 /* Status Panel */
 .status-panel {
+    position: relative; /* Relative positioning for 3D character */
+    z-index: 1;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
@@ -175,11 +177,15 @@ body {
 
 /* Button Layout - 80% web width, centered, 3 buttons per line */
 .buttons-container {
+    position: relative;
+    z-index: 3;
     width: 80%;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    row-gap: 48px; /* Increased row gap to fit sitting character */
+    column-gap: 16px;
+    margin-top: 24px;
 }
 
 .sound-btn {
@@ -330,6 +336,8 @@ body {
 
 /* Combo Panel Styles */
 .combo-panel {
+    position: relative;
+    z-index: 2;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(12px);
@@ -374,7 +382,13 @@ body {
     gap: 12px;
 }
 
+.combo-btn-wrapper {
+    position: relative;
+    display: inline-flex;
+}
+
 .combo-action-btn {
+    width: 100%;
     padding: 10px 18px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -425,6 +439,36 @@ body {
     cursor: not-allowed;
 }
 
+.combo-action-btn.share-combo {
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.combo-action-btn.share-combo:hover:not(:disabled) {
+    background: rgba(0, 204, 184, 0.08);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.combo-action-btn.share-combo.copied {
+    background: var(--accent-color) !important;
+    color: var(--bg-secondary) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 4px 12px var(--accent-glow) !important;
+}
+
+.combo-action-btn.share-combo:disabled {
+    color: var(--text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--glass-border);
+}
+
+.combo-share-icon {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
 .combo-dropzone {
     background: rgba(60, 60, 70, 0.02);
     border: 2px dashed var(--glass-border);
@@ -469,6 +513,7 @@ body {
 }
 
 .combo-item {
+    position: relative; /* Relative positioning for 3D character */
     background: var(--bg-secondary);
     border: 1px solid var(--glass-border);
     border-radius: 12px;
@@ -544,6 +589,7 @@ body {
     display: flex;
     align-items: stretch;
     width: 100%;
+    position: relative; /* Relative positioning for 3D character */
 }
 
 .sound-card-wrapper .sound-btn {
@@ -615,4 +661,28 @@ body {
         padding: 14px 18px;
         font-size: 0.95rem;
     }
+}
+
+/* 3D Character Canvas Positioning */
+#characterCanvas {
+    position: absolute;
+    bottom: calc(80% - 55px); /* Align sitting hips above button/panel boundary, compensated for 3D yOffset */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 480px;
+    height: 240px;
+    pointer-events: none; /* Mouse events pass through to button */
+    z-index: 10;
+    display: none; /* Hidden until loaded/playing */
+    opacity: 0;
+    transition: opacity 0.4s ease; /* Smooth fade in/out */
+}
+
+/* Adjustments based on parent */
+.status-panel #characterCanvas {
+    bottom: calc(75% - 55px);
+}
+
+.combo-btn-wrapper #characterCanvas {
+    bottom: calc(80% - 55px);
 }

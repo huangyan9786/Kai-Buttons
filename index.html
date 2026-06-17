@@ -7,12 +7,15 @@
     <title>Kai's MP3 播放器</title>
     <!-- SEO & Metadata -->
     <meta name="description" content="Kai老師美聲推廣委員會。">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260617215711">
 </head>
 
 <body>
@@ -60,13 +63,29 @@
                         <h2 id="comboTitle">Kai語音合體區</h2>
                     </div>
                     <div class="combo-actions">
-                        <button class="combo-action-btn play-combo" id="playComboBtn" disabled>
-                            <svg class="combo-play-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                            組合播放
-                        </button>
-                        <button class="combo-action-btn clear-combo" id="clearComboBtn" disabled>清空組合</button>
+                        <div class="combo-btn-wrapper">
+                            <button class="combo-action-btn play-combo" id="playComboBtn" disabled>
+                                <svg class="combo-play-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                                組合播放
+                            </button>
+                        </div>
+                        <div class="combo-btn-wrapper">
+                            <button class="combo-action-btn share-combo" id="shareComboBtn" disabled>
+                                <svg class="combo-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="18" cy="5" r="3"/>
+                                    <circle cx="6" cy="12" r="3"/>
+                                    <circle cx="18" cy="19" r="3"/>
+                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                </svg>
+                                分享組合
+                            </button>
+                        </div>
+                        <div class="combo-btn-wrapper">
+                            <button class="combo-action-btn clear-combo" id="clearComboBtn" disabled>清空組合</button>
+                        </div>
                     </div>
                 </div>
                 <div class="combo-dropzone" id="comboDropzone">
@@ -99,7 +118,11 @@
     <!-- Web Audio Player (Hidden API element) -->
     <audio id="audioPlayer" preload="auto"></audio>
 
-    <script src="app.js"></script>
+    <!-- Three.js & GLTFLoader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <script src="app.js?v=20260617215711"></script>
 </body>
 
 </html>

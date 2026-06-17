@@ -44,5 +44,21 @@ def update_playlist():
     else:
         print("錯誤：在 app.js 中找不到 const FALLBACK_MP3_FILES 變數！")
 
+    # Update version cache busters in index.html
+    import time
+    timestamp = time.strftime("%Y%m%d%H%M%S")
+    index_path = 'index.html'
+    if os.path.exists(index_path):
+        with open(index_path, 'r', encoding='utf-8') as f:
+            index_content = f.read()
+        
+        # Replace v=... in style.css?v=... and app.js?v=...
+        index_content = re.sub(r'style\.css(\?v=[a-zA-Z0-9_-]*)?', f'style.css?v={timestamp}', index_content)
+        index_content = re.sub(r'app\.js(\?v=[a-zA-Z0-9_-]*)?', f'app.js?v={timestamp}', index_content)
+        
+        with open(index_path, 'w', encoding='utf-8') as f:
+            f.write(index_content)
+        print(f"成功更新 index.html 中的靜態資源版本號為 {timestamp}！")
+
 if __name__ == '__main__':
     update_playlist()
